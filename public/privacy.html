@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy — DisplayX</title>
+  <meta name="theme-color" content="#0d1420">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/site.css">
+  <script src="/js/config.js" defer></script>
+  <script src="/js/common.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="/" aria-label="DisplayX home"><img src="/assets/logo.svg" alt="" width="30" height="30">DisplayX</a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <nav class="nav-menu" id="nav-menu" aria-label="Main">
+        <ul class="nav-links">
+          <li><a href="/#features">Features</a></li>
+          <li><a href="/#demo">Live demo</a></li>
+          <li><a href="/#download">Download</a></li>
+          <li><a href="/#faq">FAQ</a></li>
+          <li><a href="/login" data-auth-link data-account-label>Sign in</a></li>
+        </ul>
+        <a class="btn btn-primary nav-cta" href="/register" data-auth-link>Get DisplayX</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="simple">
+    <div class="wrap prose">
+      <h1>Privacy policy</h1>
+      <p class="placeholder">Template — describes what this website actually stores. Have it checked and fill in the [bracketed] values before going live.</p>
+
+      <h2>Controller</h2>
+      <p>[Full name, address, email] — see the <a href="/imprint">imprint</a>.</p>
+
+      <h2>What we store for your account</h2>
+      <ul>
+        <li>Email address, username and — if you set one — a password hash (bcrypt). We never store your password itself.</li>
+        <li>How you signed up (email, Google or Discord), and for Google/Discord the account ID the provider gives us.</li>
+        <li>Whether your email is verified, when you signed up and when you last signed in.</li>
+        <li>If you turn on two-factor authentication: the encrypted authenticator secret and hashed recovery codes.</li>
+      </ul>
+      <p>Legal basis: Art. 6 (1) (b) GDPR — we need this to provide your account and the download.</p>
+
+      <h2>Emails</h2>
+      <p>We send emails only for your account: address verification and password resets. [Email provider / SMTP service and location.]</p>
+
+      <h2>Sign-in with Google or Discord</h2>
+      <p>If you choose “Continue with Google” or “Continue with Discord”, you are sent to that provider. We receive your account ID, email address, whether it is verified, and your name/username. Their privacy policies apply to what happens on their side.</p>
+
+      <h2>No tracking</h2>
+      <p>This site uses no analytics, no advertising and no third-party trackers. Fonts are not loaded from external services. Your sign-in token is kept in your browser’s local storage (<code>dx_token</code>) only so you stay signed in; signing out removes it.</p>
+
+      <h2>Server logs</h2>
+      <p>[Hosting provider] may process IP addresses in server logs for security. [Retention period.]</p>
+
+      <h2>How long we keep data</h2>
+      <p>Until you delete your account. You can do that yourself in your account dashboard at any time; this removes your account data immediately.</p>
+
+      <h2>Your rights</h2>
+      <p>You have the right to access, rectification, erasure, restriction of processing, data portability and objection, and the right to lodge a complaint with a supervisory authority. Contact: [email].</p>
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div>
+        <a class="brand" href="/"><img src="/assets/logo.svg" alt="" width="26" height="26">DisplayX</a>
+        <small>© <span data-year></span> DisplayX. Not affiliated with NVIDIA, AMD, Microsoft, Valve or any game publisher.</small>
+      </div>
+      <ul class="footer-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/imprint">Imprint</a></li>
+        <li><a href="/privacy">Privacy</a></li>
+      </ul>
+    </div>
+  </footer>
+</body>
+</html>

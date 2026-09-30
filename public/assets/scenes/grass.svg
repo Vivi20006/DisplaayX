@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8fa6b8"/><stop offset="1" stop-color="#c9cfc8"/>
+    </linearGradient>
+    <linearGradient id="field" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6d7a52"/><stop offset="1" stop-color="#4a5436"/>
+    </linearGradient>
+    <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9aa596" stop-opacity=".7"/><stop offset="1" stop-color="#9aa596" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#sky)"/>
+  <path d="M0 330 L120 300 L260 318 L380 282 L520 305 L660 272 L800 300 L940 276 L1080 298 L1200 284 V420 H0Z" fill="#7f8c8a"/>
+  <path d="M0 360 Q200 330 420 352 T820 340 T1200 350 V675 H0Z" fill="#76825a"/>
+  <rect y="330" width="1200" height="80" fill="url(#haze)"/>
+  <path d="M0 420 Q300 380 600 410 T1200 400 V675 H0Z" fill="url(#field)"/>
+  <g fill="#3f4a2e">
+    <ellipse cx="180" cy="372" rx="70" ry="30"/><ellipse cx="240" cy="360" rx="50" ry="34"/>
+    <ellipse cx="930" cy="366" rx="80" ry="28"/><ellipse cx="1010" cy="356" rx="46" ry="30"/>
+  </g>
+  <g fill="#566140">
+    <ellipse cx="610" cy="398" rx="46" ry="18"/><ellipse cx="648" cy="392" rx="30" ry="16"/>
+  </g>
+  <!-- small figure half hidden by the bush -->
+  <rect x="626" y="378" width="7" height="14" rx="2" fill="#4b4238"/><circle cx="629.5" cy="375" r="3.4" fill="#5c4f43"/>
+  <g stroke="#5f6b42" stroke-width="3" stroke-linecap="round" opacity=".8">
+    <path d="M60 640 l8 -40M90 650 l-6 -46M140 660 l10 -52M1100 645 l-8 -44M1140 655 l6 -50M1060 660 l12 -40"/>
+  </g>
+  <path d="M0 560 Q300 520 600 548 T1200 540 V675 H0Z" fill="#434c31" opacity=".6"/>
+</svg>

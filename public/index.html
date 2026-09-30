@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DisplayX — Colour, zoom and sound controls for PC gamers</title>
+  <meta name="description" content="DisplayX is a free Windows app for gamers: vibrance up to 300, saturation, gamma, contrast and temperature per monitor, switching automatically per game. Plus hold-to-zoom, a ten-band headset equalizer, a safe Windows optimizer and auto-connect for wipes.">
+  <meta name="theme-color" content="#0d1420">
+  <meta property="og:title" content="DisplayX — the colour controls your driver hides">
+  <meta property="og:description" content="Free Windows app: vibrance up to 300, per-monitor colour, per-game profiles, hold-to-zoom, headset EQ, safe optimizer, auto-connect.">
+  <meta property="og:url" content="https://displayx.lol/">
+  <meta property="og:image" content="https://displayx.lol/assets/app.png">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/site.css">
+  <script src="/js/config.js" defer></script>
+  <script src="/js/common.js" defer></script>
+  <script src="/js/home.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="/" aria-label="DisplayX home"><img src="/assets/logo.svg" alt="" width="30" height="30">DisplayX</a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <nav class="nav-menu" id="nav-menu" aria-label="Main">
+        <ul class="nav-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#zoom">Ultra-zoom</a></li>
+          <li><a href="#equalizer">Equalizer</a></li>
+          <li><a href="#optimizer">Optimizer</a></li>
+          <li><a href="#demo">Live demo</a></li>
+          <li><a href="#download">Download</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="/login" data-auth-link data-account-label>Sign in</a></li>
+        </ul>
+        <a class="btn btn-primary nav-cta" href="/register" data-auth-link>Get DisplayX</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="eyebrow">Free for Windows 10 &amp; 11</span>
+          <h1>The colour controls your driver <span>hides</span>.</h1>
+          <p class="lead">Vibrance up to 300, saturation, gamma, contrast and temperature — per monitor, live, switching automatically per game. Plus hold-to-zoom, a headset equalizer, a safe Windows optimizer and auto-connect for wipes.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="/register" data-auth-link>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+              Download free
+            </a>
+            <a class="btn btn-ghost btn-lg" href="#demo">Try the live demo</a>
+          </div>
+          <ul class="hero-meta">
+            <li>Version 1.1.0</li>
+            <li>~69 MB</li>
+            <li>NVIDIA, AMD &amp; integrated graphics</li>
+          </ul>
+        </div>
+        <figure class="shot" data-shot>
+          <img class="shot-img" src="/assets/app.png" alt="The DisplayX app window with colour sliders for each monitor" width="1120" height="720">
+          <div class="shot-fallback" aria-hidden="true"><img src="/assets/logo.svg" alt="">DisplayX 1.1.0</div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Built for -->
+    <section class="games" aria-label="Built for">
+      <div class="wrap games-inner">
+        <span class="games-label">Built for</span>
+        <ul class="games-list">
+          <li>Rust</li>
+          <li>CS2</li>
+          <li>Valorant</li>
+          <li>Apex Legends</li>
+          <li>Fortnite</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section" id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Features</span>
+          <h2>One tray app instead of driver menus and registry guides.</h2>
+          <p>DisplayX sits in the tray, applies your settings when a game gets focus and restores your normal colours when you quit.</p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="card">
+            <span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg></span>
+            <h3>Colour</h3>
+            <p>Vibrance 0–300, saturation, brightness, gamma, contrast and colour temperature. Per monitor, applied live — no reboot, no driver restart.</p>
+            <a href="#demo">Try it live →</a>
+          </article>
+          <article class="card">
+            <span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg></span>
+            <h3>Profiles per game</h3>
+            <p>Bind a profile to a game or a hotkey. It applies when the game gets focus and reverts when it loses focus. Colours and EQ switch together.</p>
+          </article>
+          <article class="card">
+            <span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4M11 8v6M8 11h6"/></svg></span>
+            <h3>Ultra-zoom</h3>
+            <p>Hold one key or mouse button and the screen eases in — up to 8×, centred on your cursor.</p>
+            <a href="#zoom">See how it works →</a>
+          </article>
+          <article class="card">
+            <span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20v-6M4 10V4M12 20v-8M12 8V4M20 20v-4M20 12V4M2 14h4M10 8h4M18 16h4"/></svg></span>
+            <h3>Headset equalizer</h3>
+            <p>Ten bands on the Windows playback path, so it works in every game and app. Includes a Footsteps preset.</p>
+            <a href="#equalizer">Shape a curve →</a>
+          </article>
+          <article class="card">
+            <span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></span>
+            <h3>Resolution &amp; refresh rate</h3>
+            <p>Switch resolution and Hz per monitor. Every change is a test that rolls back after 15 seconds unless you confirm it.</p>
+          </article>
+          <article class="card">
+            <span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19 5a10 10 0 0 1 0 14M5 19A10 10 0 0 1 5 5"/></svg></span>
+            <h3>Streaming LUT</h3>
+            <p>Export your colour curve as a .cube LUT for OBS’s “Apply LUT” filter, so viewers see the same colours you do.</p>
+          </article>
+          <article class="card">
+            <span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 14l4-4"/><path d="M3.3 17a9 9 0 1 1 17.4 0"/></svg></span>
+            <h3>Optimizer</h3>
+            <p>29 Windows tweaks in 6 groups. Old values are backed up before anything changes, and one click undoes it.</p>
+            <a href="#optimizer">What it changes →</a>
+          </article>
+          <article class="card">
+            <span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+            <h3>Auto-connect</h3>
+            <p>Set the wipe time. DisplayX waits, queries the server every 10 seconds, then launches the game and joins through Steam.</p>
+            <a href="#autoconnect">How it waits →</a>
+          </article>
+        </div>
+
+        <div class="detail-grid">
+          <article class="card">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>Not a cheat. No anti-cheat risk.</h3>
+            <p>DisplayX never touches a game process, reads no game memory and injects nothing. It only uses Windows display settings — the same APIs your driver’s control panel uses.</p>
+            <ul class="checklist">
+              <li><strong>NVIDIA</strong> through NVAPI, <strong>AMD</strong> through ADL</li>
+              <li>Windows fallback: gamma ramp + Magnification API</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Safe by design</h3>
+            <p>Everything DisplayX changes, it can put back.</p>
+            <ul class="checklist">
+              <li>Original colours of every monitor are saved at startup and restored on exit, logoff and even after a crash</li>
+              <li>Optimizer writes a backup before every change</li>
+              <li>Resolution changes roll back automatically</li>
+              <li>Installer checksums are shown before anything runs</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ultra-zoom -->
+    <section class="section section-alt" id="zoom">
+      <div class="wrap split">
+        <div>
+          <div class="section-head">
+            <span class="eyebrow">Ultra-zoom</span>
+            <h2>Hold to zoom. Let go to see everything.</h2>
+            <p>Hold one key or mouse button and the screen eases in on your cursor. Release it and you’re back — no toggles to forget.</p>
+          </div>
+          <ul class="checklist">
+            <li>Zoom factors <strong>2×, 3×, 5× and 8×</strong></li>
+            <li>Bind it to a key like <kbd>C</kbd> or <kbd>Insert</kbd>, or to Mouse 4, Mouse 5, middle or right click</li>
+            <li>The key is observed, never swallowed — <kbd>C</kbd> still types a C</li>
+            <li>Only the primary monitor zooms, with smooth eased motion instead of a hard jump</li>
+          </ul>
+        </div>
+        <div class="demo">
+          <div class="zoom-stage" id="zoom-stage" tabindex="0" role="img" aria-label="Zoom preview. Press and hold on the image, or focus it and hold C, to zoom in on a far-away figure.">
+            <img src="/assets/scenes/grass.svg" alt="" data-scene="grass" draggable="false">
+            <span class="zoom-hint">Press and hold here — or hold <kbd>C</kbd></span>
+            <span class="zoom-badge" id="zoom-badge">3×</span>
+          </div>
+          <div class="demo-row">
+            <span class="demo-row-label">Zoom factor</span>
+            <div class="chips" role="group" aria-label="Zoom factor">
+              <button class="chip" type="button" data-zoom="2" aria-pressed="false">2×</button>
+              <button class="chip" type="button" data-zoom="3" aria-pressed="true">3×</button>
+              <button class="chip" type="button" data-zoom="5" aria-pressed="false">5×</button>
+              <button class="chip" type="button" data-zoom="8" aria-pressed="false">8×</button>
+            </div>
+          </div>
+          <p class="demo-caption">Browser preview. Hint: there’s someone near the bush in the middle.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Equalizer -->
+    <section class="section" id="equalizer">
+      <div class="wrap split flip">
+        <div>
+          <div class="section-head">
+            <span class="eyebrow">Headset equalizer</span>
+            <h2>Hear footsteps before you see them.</h2>
+            <p>Ten bands from 31 Hz to 16 kHz, −12 to +12 dB, on the Windows playback path — so it works in every game and app.</p>
+          </div>
+          <ul class="checklist">
+            <li>Presets: <strong>Flat, Bass boost, Bass max, Gaming, Footsteps, Voice</strong></li>
+            <li><strong>Footsteps</strong> cuts the rumble and lifts 2–8 kHz</li>
+            <li>An automatic pre-amp cut keeps boosted sound from clipping</li>
+            <li>Profiles can carry the EQ setting, so colours and sound switch together</li>
+          </ul>
+          <div class="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+            <p>Needs <strong>Equalizer APO</strong> (free, open source). DisplayX detects it, offers to download and install it, and shows the file size and SHA-256 before running anything. Attaching it to a device needs one admin confirmation and briefly restarts Windows audio.</p>
+          </div>
+        </div>
+        <div class="demo" id="eq-demo">
+          <div class="chips" role="group" aria-label="Equalizer preset">
+            <button class="chip" type="button" data-preset="flat" aria-pressed="false">Flat</button>
+            <button class="chip" type="button" data-preset="bass" aria-pressed="false">Bass boost</button>
+            <button class="chip" type="button" data-preset="bassmax" aria-pressed="false">Bass max</button>
+            <button class="chip" type="button" data-preset="gaming" aria-pressed="false">Gaming</button>
+            <button class="chip" type="button" data-preset="footsteps" aria-pressed="true">Footsteps</button>
+            <button class="chip" type="button" data-preset="voice" aria-pressed="false">Voice</button>
+          </div>
+          <svg class="eq-graph" id="eq-graph" viewBox="0 0 600 220" role="img" aria-label="Equalizer curve"></svg>
+          <div class="eq-bands" id="eq-bands"></div>
+          <div class="eq-foot">
+            <span>Pre-amp (auto): <strong id="eq-preamp">0 dB</strong></span>
+            <span>Preview curves are illustrative.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Optimizer -->
+    <section class="section section-alt" id="optimizer">
+      <div class="wrap split">
+        <div>
+          <div class="section-head">
+            <span class="eyebrow">Optimizer</span>
+            <h2>Windows tweaks you can undo.</h2>
+            <p>29 tweaks in 6 groups. One switch per group, single tweaks behind a “⋯” menu — and every tweak says what it costs, not just what it does.</p>
+          </div>
+          <ul class="checklist">
+            <li>Old values are written to disk (JSON + .reg) before anything changes</li>
+            <li>Optional Windows restore point, and one click to undo</li>
+            <li><strong>Check now</strong> re-reads everything to catch settings a Windows update silently reverted</li>
+            <li>Examples: Game Mode, Game DVR off, hardware GPU scheduling, mouse acceleration off, fast key repeat, power plan, power throttling off, forced update restarts off, telemetry off, activity history off</li>
+          </ul>
+        </div>
+        <div>
+          <div class="card">
+            <div class="opt-panel-title"><strong>Tweak groups</strong><span>29 total</span></div>
+            <ul class="opt-list">
+              <li class="opt-row"><strong>Gaming</strong><span class="count">6 tweaks</span><span class="opt-more" aria-hidden="true">⋯</span></li>
+              <li class="opt-row"><strong>Input &amp; latency</strong><span class="count">4 tweaks</span><span class="opt-more" aria-hidden="true">⋯</span></li>
+              <li class="opt-row"><strong>Power &amp; scheduling</strong><span class="count">4 tweaks</span><span class="opt-more" aria-hidden="true">⋯</span></li>
+              <li class="opt-row"><strong>Network &amp; updates</strong><span class="count">2 tweaks</span><span class="opt-more" aria-hidden="true">⋯</span></li>
+              <li class="opt-row"><strong>Privacy &amp; telemetry</strong><span class="count">5 tweaks</span><span class="opt-more" aria-hidden="true">⋯</span></li>
+              <li class="opt-row"><strong>Desktop &amp; Explorer</strong><span class="count">8 tweaks</span><span class="opt-more" aria-hidden="true">⋯</span></li>
+            </ul>
+            <div class="excluded">
+              <h3>Deliberately left out</h3>
+              <ul>
+                <li>Anything that deletes files</li>
+                <li>Anything that weakens security — Defender, VBS, Memory Integrity</li>
+                <li>Placebo “folklore” tweaks like HPET or Nagle</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Auto-connect -->
+    <section class="section" id="autoconnect">
+      <div class="wrap split flip">
+        <div>
+          <div class="section-head">
+            <span class="eyebrow">Auto-connect</span>
+            <h2>Be on the server the moment it wipes.</h2>
+            <p>Set a server, a day and a time. DisplayX waits in the tray and does the refreshing for you.</p>
+          </div>
+          <ol class="steps">
+            <li>
+              <h3>It watches the server</h3>
+              <p>From the scheduled time, DisplayX queries the game server itself every 10 seconds — not just a ping.</p>
+            </li>
+            <li>
+              <h3>It joins for you</h3>
+              <p>When the server is up, it launches the game and joins through Steam.</p>
+            </li>
+            <li>
+              <h3>It knows when to stop</h3>
+              <p>If the wipe never happens, it gives up after two hours.</p>
+            </li>
+          </ol>
+        </div>
+        <div class="card mock-panel" aria-label="Auto-connect settings, illustration">
+          <div class="mock-field"><span>Server</span><div class="mock-input">your.server.address:28015</div></div>
+          <div class="mock-row">
+            <div class="mock-field"><span>Day</span><div class="mock-input">Thursday</div></div>
+            <div class="mock-field"><span>Time</span><div class="mock-input">20:00</div></div>
+          </div>
+          <div class="status-line"><span class="pulse" aria-hidden="true"></span>Waiting — querying every 10 s from the scheduled time</div>
+          <div class="inline-actions">
+            <span class="btn btn-ghost btn-sm" aria-hidden="true">Check now</span>
+            <span class="btn btn-primary btn-sm" aria-hidden="true">Connect now</span>
+          </div>
+          <p class="demo-caption">“Check now” shows players, map and ping. “Connect now” joins immediately. Works with Rust and other Steam games that support <code>steam://connect</code>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live colour demo -->
+    <section class="section section-alt" id="demo">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Live demo</span>
+          <h2>Move the sliders. Hold to compare.</h2>
+          <p>Washed-out grass, flat snow, dusty desert — pick a scene and tune it. Hold “Original” to see what you started with.</p>
+        </div>
+        <div class="color-demo">
+          <div class="demo">
+            <div class="chips" role="group" aria-label="Scene">
+              <button class="chip" type="button" data-scene-pick="grass" aria-pressed="true">Grass</button>
+              <button class="chip" type="button" data-scene-pick="snow" aria-pressed="false">Snow</button>
+              <button class="chip" type="button" data-scene-pick="desert" aria-pressed="false">Desert</button>
+            </div>
+            <div class="monitor" id="monitor">
+              <canvas id="color-canvas" width="1200" height="675" role="img" aria-label="Game scene with the current colour settings applied"></canvas>
+              <span class="monitor-tag">Original</span>
+            </div>
+            <p class="demo-caption">Browser preview of the effect. The app applies it through your graphics driver, on the whole monitor.</p>
+          </div>
+          <div class="card">
+            <div class="sliders" id="sliders">
+              <div class="slider">
+                <label for="s-vibrance">Vibrance <output id="o-vibrance" for="s-vibrance"></output></label>
+                <input id="s-vibrance" type="range" min="0" max="300" step="1" data-key="vibrance">
+              </div>
+              <div class="slider">
+                <label for="s-saturation">Saturation <output id="o-saturation" for="s-saturation"></output></label>
+                <input id="s-saturation" type="range" min="0" max="200" step="1" data-key="saturation">
+              </div>
+              <div class="slider">
+                <label for="s-brightness">Brightness <output id="o-brightness" for="s-brightness"></output></label>
+                <input id="s-brightness" type="range" min="-50" max="50" step="1" data-key="brightness">
+              </div>
+              <div class="slider">
+                <label for="s-gamma">Gamma <output id="o-gamma" for="s-gamma"></output></label>
+                <input id="s-gamma" type="range" min="50" max="200" step="1" data-key="gamma">
+              </div>
+              <div class="slider">
+                <label for="s-contrast">Contrast <output id="o-contrast" for="s-contrast"></output></label>
+                <input id="s-contrast" type="range" min="50" max="150" step="1" data-key="contrast">
+              </div>
+              <div class="slider">
+                <label for="s-temperature">Temperature <output id="o-temperature" for="s-temperature"></output></label>
+                <input id="s-temperature" type="range" min="-100" max="100" step="1" data-key="temperature">
+                <div class="slider-scale" aria-hidden="true"><span>Cooler</span><span>Warmer</span></div>
+              </div>
+              <div class="demo-actions">
+                <button class="btn btn-primary" type="button" id="hold-original">Hold for original</button>
+                <button class="btn btn-ghost" type="button" id="reset-colors">Reset</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="note" id="lut-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+          <p><strong>Streaming?</strong> Windows applies these colours after the frame is composed, so OBS and Discord capture the original image. DisplayX exports the colour curve as a .cube LUT for OBS’s “Apply LUT” filter — then viewers see the same colours you do.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Download -->
+    <section class="section" id="download">
+      <div class="wrap">
+        <div class="download-card">
+          <div>
+            <span class="eyebrow">Download</span>
+            <h2>Free. Every feature. Every update.</h2>
+            <p class="lead">No trial, no premium tier. You need a free account to download — sign up with email, Google or Discord.</p>
+            <a class="btn btn-primary btn-lg" href="/register" data-auth-link>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+              Download for Windows
+            </a>
+            <p class="small">Already have an account? <a href="/login" data-auth-link>Sign in</a></p>
+          </div>
+          <dl class="specs">
+            <div><dt>Version</dt><dd>1.1.0</dd></div>
+            <div><dt>Download</dt><dd>One self-contained DisplayX.exe, ~69 MB</dd></div>
+            <div><dt>System</dt><dd>Windows 10 &amp; 11, 64-bit</dd></div>
+            <div><dt>Graphics</dt><dd>NVIDIA, AMD and integrated graphics</dd></div>
+            <div><dt>.NET</dt><dd>Not needed — uses the WebView2 runtime that ships with Windows 10/11</dd></div>
+            <div><dt>Runs as</dt><dd>Tray app, single instance, optional autostart with Windows</dd></div>
+            <div><dt>Your data</dt><dd><code>%APPDATA%\DisplayX\</code> — settings, profiles, logs, optimizer backups</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- Honest limits -->
+    <section class="section section-alt" id="limits">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Honest limits</span>
+          <h2>What DisplayX can’t do.</h2>
+          <p>Better you read it here than find out in a match.</p>
+        </div>
+        <div class="limits">
+          <article class="card">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v5M12 18h.01"/></svg>Exclusive fullscreen</h3>
+            <p>Borderless fullscreen works fully. In exclusive fullscreen the gamma path keeps working, but the saturation and vibrance layer does not. Use borderless.</p>
+          </article>
+          <article class="card">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v5M12 18h.01"/></svg>Vibrance on AMD</h3>
+            <p>Modern AMD drivers refuse ADL saturation, so on AMD vibrance and saturation go through the Windows Magnification API. That effect is desktop-wide and doesn’t show in screen captures — use the LUT export for streams.</p>
+          </article>
+          <article class="card">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v5M12 18h.01"/></svg>Equalizer needs APO</h3>
+            <p>The equalizer runs on Equalizer APO. DisplayX installs it for you, with file size and checksum shown first, and needs one admin confirmation.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">FAQ</span>
+          <h2>Questions gamers actually ask.</h2>
+        </div>
+        <div class="faq">
+          <details>
+            <summary>Is this a cheat or an anti-cheat risk?</summary>
+            <div><p>No. DisplayX never touches a game process, reads no game memory and injects nothing. It only uses Windows display settings — the same APIs your driver’s control panel uses.</p></div>
+          </details>
+          <details>
+            <summary>Can people see the colours in my stream?</summary>
+            <div><p>Not by default: Windows applies the colours after the frame is composed, so OBS and Discord capture the original image. Export the .cube LUT from DisplayX and add it with OBS’s “Apply LUT” filter — then viewers see what you see.</p></div>
+          </details>
+          <details>
+            <summary>Does it work in fullscreen?</summary>
+            <div><p>Borderless fullscreen works fully. In exclusive fullscreen only the gamma part works; the saturation and vibrance layer doesn’t. We recommend borderless.</p></div>
+          </details>
+          <details>
+            <summary>What happens if it crashes?</summary>
+            <div><p>Your original colours are saved at startup and written back on exit, logoff and even after a crash — a stuck colour cast can’t happen.</p></div>
+          </details>
+          <details>
+            <summary>Does the equalizer need extra software?</summary>
+            <div><p>Yes, Equalizer APO (free, open source). DisplayX detects it and offers to install it, showing the file size and SHA-256 checksum before anything runs.</p></div>
+          </details>
+          <details>
+            <summary>Do I need .NET?</summary>
+            <div><p>No. The download is one self-contained file. It uses the WebView2 runtime that already ships with Windows 10 and 11.</p></div>
+          </details>
+          <details>
+            <summary>Why do I need an account?</summary>
+            <div><p>The download and the app are tied to a free account — email, Google or Discord. The app asks you to sign in with the same account on first start. DisplayX stays free for everyone.</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section section-alt cta">
+      <div class="wrap">
+        <h2>See your game the way you want to.</h2>
+        <p>Free for Windows 10 &amp; 11. All features, all future updates.</p>
+        <a class="btn btn-primary btn-lg" href="/register" data-auth-link>Get DisplayX</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div>
+        <a class="brand" href="/"><img src="/assets/logo.svg" alt="" width="26" height="26">DisplayX</a>
+        <small>© <span data-year></span> DisplayX. Not affiliated with NVIDIA, AMD, Microsoft, Valve or any game publisher.</small>
+      </div>
+      <ul class="footer-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#download">Download</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="/login" data-auth-link data-account-label>Sign in</a></li>
+        <li><a href="/imprint">Imprint</a></li>
+        <li><a href="/privacy">Privacy</a></li>
+      </ul>
+    </div>
+  </footer>
+</body>
+</html>

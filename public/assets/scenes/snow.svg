@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a9b4c0"/><stop offset="1" stop-color="#d7dbdf"/>
+    </linearGradient>
+    <linearGradient id="snow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dfe3e7"/><stop offset="1" stop-color="#c3c9d0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#sky)"/>
+  <path d="M0 330 L150 250 L260 300 L400 220 L540 300 L700 240 L860 310 L1000 230 L1200 300 V430 H0Z" fill="#9aa5b1"/>
+  <path d="M150 250 L190 272 L170 276 L205 290 L260 300 L400 220 L430 240 L410 246 L450 262Z" fill="#e6e9ec" opacity=".8"/>
+  <path d="M700 240 L730 258 L712 262 L760 280 L860 310 L1000 230 L1030 248 L1010 252 L1060 270Z" fill="#e6e9ec" opacity=".8"/>
+  <path d="M0 400 Q300 360 600 390 T1200 380 V675 H0Z" fill="url(#snow)"/>
+  <g fill="#5a6468">
+    <path d="M200 400 l18 -60 l18 60z"/><path d="M230 404 l14 -46 l14 46z"/>
+    <path d="M960 392 l20 -66 l20 66z"/><path d="M1000 398 l14 -44 l14 44z"/>
+  </g>
+  <path d="M520 402 q40 -22 90 -4 q30 -12 60 4z" fill="#b7bec6"/>
+  <!-- small figure behind the snowbank -->
+  <rect x="588" y="384" width="7" height="14" rx="2" fill="#3f4448"/><circle cx="591.5" cy="381" r="3.4" fill="#50575c"/>
+  <path d="M0 540 Q300 500 600 530 T1200 520 V675 H0Z" fill="#cfd4da" opacity=".7"/>
+</svg>
