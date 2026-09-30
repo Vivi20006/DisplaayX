@@ -1,109 +1,127 @@
-// Home page: screenshot fallback, zoom demo, equalizer demo, live colour demo.
+// Home page: hero before/after, ultra-zoom, equalizer, optimizer preview, colour lab.
 (function () {
   'use strict';
 
-  const { $, $$, reducedMotion } = window.DX;
+  const { $, $$, reducedMotion, segmented, toast } = window.DX;
+  const { NEUTRAL, sceneData, process } = window.DXColor;
 
-  // ---------- App screenshot: show a neutral frame until app.png exists ----------
+  // ---------- Hero: before / after ----------
 
-  function initShot() {
-    const fig = $('[data-shot]');
-    if (!fig) return;
-    const img = $('.shot-img', fig);
-    const missing = () => fig.classList.add('is-missing');
-    if (img.complete && img.naturalWidth === 0) missing();
-    img.addEventListener('error', missing);
-  }
+  function initCompare() {
+    const box = $('#hero-compare');
+    if (!box) return;
+    const after = $('canvas.after', box);
+    const before = $('canvas.before', box);
+    const handle = $('.compare-handle', box);
+    const settings = { vibrance: Number(box.dataset.vibrance) || 200, contrast: 106 };
+    let pos = 50;
+    let touched = false;
 
-  // ---------- Scene loading: prefer real screenshots (.jpg), fall back to the bundled SVGs ----------
+    const setPos = (p) => {
+      pos = Math.min(100, Math.max(0, p));
+      box.style.setProperty('--pos', `${pos}%`);
+      handle.setAttribute('aria-valuenow', String(Math.round(pos)));
+    };
 
-  const sceneCache = new Map();
-
-  function loadImage(src) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.decoding = 'async';
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = src;
-    });
-  }
-
-  function loadScene(name) {
-    if (!sceneCache.has(name)) {
-      sceneCache.set(
-        name,
-        loadImage(`/assets/scenes/${name}.jpg`).catch(() => loadImage(`/assets/scenes/${name}.svg`)),
-      );
+    async function show(scene) {
+      try {
+        const src = await sceneData(scene, before);
+        const actx = after.getContext('2d');
+        const out = actx.createImageData(after.width, after.height);
+        actx.putImageData(process(src, out, settings), 0, 0);
+      } catch (e) { console.warn('scene', scene, e); }
     }
-    return sceneCache.get(name);
+
+    const fromEvent = (e) => {
+      const r = box.getBoundingClientRect();
+      setPos(((e.clientX - r.left) / r.width) * 100);
+    };
+    let dragging = false;
+    box.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      touched = true;
+      box.setPointerCapture(e.pointerId);
+      fromEvent(e);
+    });
+    box.addEventListener('pointermove', (e) => { if (dragging) fromEvent(e); });
+    ['pointerup', 'pointercancel'].forEach((t) => box.addEventListener(t, () => { dragging = false; }));
+    handle.addEventListener('keydown', (e) => {
+      const step = e.shiftKey ? 10 : 4;
+      if (e.key === 'ArrowLeft') { setPos(pos - step); e.preventDefault(); }
+      if (e.key === 'ArrowRight') { setPos(pos + step); e.preventDefault(); }
+      if (e.key === 'Home') setPos(0);
+      if (e.key === 'End') setPos(100);
+      touched = true;
+    });
+
+    segmented($('#hero-scenes'), (scene) => show(scene));
+    setPos(50);
+    show('grass');
+
+    // A little sweep once it scrolls into view, so it's obvious it's draggable.
+    if (!reducedMotion() && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver(([en]) => {
+        if (!en.isIntersecting) return;
+        io.disconnect();
+        const t0 = performance.now() + 900;
+        const tick = (now) => {
+          if (touched) return;
+          const t = Math.max(0, now - t0) / 1800;
+          setPos(50 + Math.sin(t * Math.PI * 2) * 28 * Math.max(0, 1 - t / 1.6));
+          if (t < 1.6) requestAnimationFrame(tick); else setPos(50);
+        };
+        requestAnimationFrame(tick);
+      }, { threshold: 0.5 });
+      io.observe(box);
+    }
   }
 
-  // ---------- Ultra-zoom demo ----------
+  // ---------- Ultra-zoom ----------
 
   function initZoom() {
-    const stage = $('#zoom-stage');
-    if (!stage) return;
-    const img = $('img', stage);
-    const badge = $('#zoom-badge');
+    const view = $('#zoom-view');
+    if (!view) return;
+    const img = $('img', view);
+    const badge = $('#zoom-factor');
     let factor = 3;
     let zoomed = false;
-    let origin = { x: 50, y: 50 };
+    let ox = 50, oy = 50;
+    img.style.transition = 'transform 0.34s cubic-bezier(0.2, 0.8, 0.2, 1), transform-origin 0.12s linear';
 
-    img.style.transition = 'transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1), transform-origin 0.12s linear';
-
-    function point(e) {
-      const r = stage.getBoundingClientRect();
-      return {
-        x: Math.min(100, Math.max(0, ((e.clientX - r.left) / r.width) * 100)),
-        y: Math.min(100, Math.max(0, ((e.clientY - r.top) / r.height) * 100)),
-      };
-    }
-    function apply() {
-      img.style.transformOrigin = `${origin.x}% ${origin.y}%`;
+    const apply = () => {
+      img.style.transformOrigin = `${ox}% ${oy}%`;
       img.style.transform = zoomed ? `scale(${factor})` : 'scale(1)';
-      stage.classList.toggle('is-zoomed', zoomed);
-    }
-    function zoomIn() { zoomed = true; apply(); }
-    function zoomOut() { zoomed = false; apply(); }
+      view.style.setProperty('--sx', `${ox}%`);
+      view.style.setProperty('--sy', `${oy}%`);
+      view.classList.toggle('zoomed', zoomed);
+    };
+    const point = (e) => {
+      const r = view.getBoundingClientRect();
+      ox = Math.min(100, Math.max(0, ((e.clientX - r.left) / r.width) * 100));
+      oy = Math.min(100, Math.max(0, ((e.clientY - r.top) / r.height) * 100));
+    };
+    const zin = () => { zoomed = true; apply(); };
+    const zout = () => { zoomed = false; apply(); };
 
-    stage.addEventListener('pointerdown', (e) => {
-      e.preventDefault();
-      stage.setPointerCapture(e.pointerId);
-      origin = point(e);
-      zoomIn();
-    });
-    stage.addEventListener('pointermove', (e) => {
-      if (!zoomed && e.pointerType !== 'mouse') return;
-      origin = point(e);
+    view.addEventListener('pointerdown', (e) => { e.preventDefault(); view.setPointerCapture(e.pointerId); point(e); zin(); });
+    view.addEventListener('pointermove', (e) => { point(e); if (zoomed) apply(); });
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((t) => view.addEventListener(t, zout));
+    view.addEventListener('contextmenu', (e) => e.preventDefault());
+    view.addEventListener('keydown', (e) => { if (e.key.toLowerCase() === 'c' && !e.repeat && !e.ctrlKey && !e.metaKey) zin(); });
+    view.addEventListener('keyup', (e) => { if (e.key.toLowerCase() === 'c') zout(); });
+    view.addEventListener('blur', zout);
+
+    segmented($('#zoom-seg'), (v) => {
+      factor = Number(v);
+      badge.textContent = `${factor}×`;
       if (zoomed) apply();
-    });
-    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((t) => stage.addEventListener(t, zoomOut));
-    stage.addEventListener('contextmenu', (e) => e.preventDefault());
-
-    // Keyboard: focus the stage and hold C (the app observes the key, it never swallows it).
-    stage.addEventListener('keydown', (e) => {
-      if (e.key.toLowerCase() === 'c' && !e.repeat && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        zoomIn();
-      }
-    });
-    stage.addEventListener('keyup', (e) => { if (e.key.toLowerCase() === 'c') zoomOut(); });
-    stage.addEventListener('blur', zoomOut);
-
-    $$('[data-zoom]').forEach((chip) => {
-      chip.addEventListener('click', () => {
-        factor = Number(chip.dataset.zoom);
-        badge.textContent = `${factor}×`;
-        $$('[data-zoom]').forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
-        if (zoomed) apply();
-      });
     });
   }
 
-  // ---------- Equalizer demo ----------
+  // ---------- Equalizer ----------
 
   const BANDS = ['31', '62', '125', '250', '500', '1k', '2k', '4k', '8k', '16k'];
-  // Illustrative curves for the browser preview.
+  // Illustrative curves for the preview.
   const PRESETS = {
     flat: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     bass: [6, 5, 4, 2, 0, 0, 0, 0, 0, 0],
@@ -116,13 +134,11 @@
   function initEq() {
     const svg = $('#eq-graph');
     const bandsEl = $('#eq-bands');
-    if (!svg || !bandsEl) return;
-    const preampEl = $('#eq-preamp');
+    if (!svg) return;
     const NS = 'http://www.w3.org/2000/svg';
-    const W = 600, H = 220, PL = 38, PR = 16, PT = 14, PB = 28;
-    const xs = BANDS.map((_, i) => PL + (i * (W - PL - PR)) / (BANDS.length - 1));
+    const W = 600, H = 230, PL = 40, PR = 18, PT = 16, PB = 30;
+    const xs = BANDS.map((_, i) => PL + (i * (W - PL - PR)) / 9);
     const y = (g) => PT + ((12 - g) / 24) * (H - PT - PB);
-
     const el = (name, attrs, parent = svg) => {
       const n = document.createElementNS(NS, name);
       for (const k in attrs) n.setAttribute(k, attrs[k]);
@@ -130,31 +146,34 @@
       return n;
     };
 
+    const defs = el('defs', {});
+    const stroke = el('linearGradient', { id: 'eqStroke', x1: '0', x2: '1', y1: '0', y2: '0' }, defs);
+    el('stop', { offset: '0', 'stop-color': '#6d28d9' }, stroke);
+    el('stop', { offset: '0.5', 'stop-color': '#c084fc' }, stroke);
+    el('stop', { offset: '1', 'stop-color': '#e879f9' }, stroke);
+    const fillG = el('linearGradient', { id: 'eqFill', x1: '0', x2: '0', y1: '0', y2: '1' }, defs);
+    el('stop', { offset: '0', 'stop-color': '#a855f7', 'stop-opacity': '0.45' }, fillG);
+    el('stop', { offset: '1', 'stop-color': '#a855f7', 'stop-opacity': '0' }, fillG);
+
     [12, 6, 0, -6, -12].forEach((g) => {
       el('line', { x1: PL, x2: W - PR, y1: y(g), y2: y(g), class: g === 0 ? 'zero-line' : 'grid-line' });
-      const t = el('text', { x: PL - 8, y: y(g) + 4, 'text-anchor': 'end', class: 'axis-label' });
-      t.textContent = g > 0 ? `+${g}` : g < 0 ? `−${-g}` : '0';
+      el('text', { x: PL - 8, y: y(g) + 4, 'text-anchor': 'end', class: 'axis' }).textContent = g > 0 ? `+${g}` : g < 0 ? `−${-g}` : '0';
     });
-    BANDS.forEach((b, i) => {
-      const t = el('text', { x: xs[i], y: H - 8, 'text-anchor': 'middle', class: 'axis-label' });
-      t.textContent = b;
-    });
+    BANDS.forEach((b, i) => { el('text', { x: xs[i], y: H - 9, 'text-anchor': 'middle', class: 'axis' }).textContent = b; });
     const fill = el('path', { class: 'curve-fill' });
     const curve = el('path', { class: 'curve' });
     const knobs = BANDS.map((_, i) => el('circle', { cx: xs[i], r: 5, class: 'knob' }));
 
-    // Sliders
-    const inputs = BANDS.map((b, i) => {
+    let gains = PRESETS.footsteps.slice();
+    const fmt = (v) => (v > 0 ? `+${v}` : v < 0 ? `−${-v}` : '0');
+
+    const controls = BANDS.map((b, i) => {
       const wrap = document.createElement('div');
       wrap.className = 'eq-band';
       const out = document.createElement('output');
       const input = document.createElement('input');
-      input.type = 'range';
-      input.min = '-12';
-      input.max = '12';
-      input.step = '1';
-      input.id = `eq-${i}`;
-      input.setAttribute('aria-label', `${b}${/k$/.test(b) ? 'Hz' : ' Hz'} gain in dB`);
+      Object.assign(input, { type: 'range', min: '-12', max: '12', step: '1', id: `eq-${i}` });
+      input.setAttribute('aria-label', `${b} Hz band, dB`);
       const label = document.createElement('label');
       label.htmlFor = input.id;
       label.textContent = b;
@@ -162,258 +181,163 @@
       bandsEl.appendChild(wrap);
       input.addEventListener('input', () => {
         gains[i] = Number(input.value);
-        setPresetChip(null);
+        out.textContent = fmt(gains[i]);
+        input.style.setProperty('--fill', `${((gains[i] + 12) / 24) * 100}%`);
+        setChip(null);
         draw(gains);
       });
       return { input, out };
     });
 
-    let gains = PRESETS.footsteps.slice();
-
-    function smoothPath(pts) {
+    function path(pts) {
       let d = `M${pts[0][0]},${pts[0][1]}`;
       for (let i = 0; i < pts.length - 1; i++) {
-        const p0 = pts[i - 1] || pts[i];
-        const p1 = pts[i];
-        const p2 = pts[i + 1];
-        const p3 = pts[i + 2] || p2;
-        const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
-        const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
-        d += ` C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p2[0]},${p2[1].toFixed(1)}`;
+        const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+        d += ` C${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)},${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)} ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)},${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)} ${p2[0]},${p2[1].toFixed(1)}`;
       }
       return d;
     }
-
     function draw(g) {
       const pts = g.map((v, i) => [xs[i], y(v)]);
-      const d = smoothPath(pts);
+      const d = path(pts);
       curve.setAttribute('d', d);
-      fill.setAttribute('d', `${d} L${xs[xs.length - 1]},${y(0)} L${xs[0]},${y(0)} Z`);
+      fill.setAttribute('d', `${d} L${xs[9]},${H - PB} L${xs[0]},${H - PB} Z`);
       knobs.forEach((k, i) => k.setAttribute('cy', pts[i][1].toFixed(1)));
       const max = Math.max(...gains);
-      preampEl.textContent = max > 0 ? `−${max} dB` : '0 dB';
+      $('#eq-preamp').textContent = max > 0 ? `−${max} dB` : '0 dB';
     }
-
-    function syncInputs() {
-      inputs.forEach(({ input, out }, i) => {
-        input.value = String(gains[i]);
-        out.textContent = gains[i] > 0 ? `+${gains[i]}` : String(gains[i]).replace('-', '−');
-      });
-    }
-    // Keep outputs in sync while dragging.
-    inputs.forEach(({ input, out }) => input.addEventListener('input', () => {
-      const v = Number(input.value);
-      out.textContent = v > 0 ? `+${v}` : String(v).replace('-', '−');
-    }));
-
-    function setPresetChip(name) {
-      $$('[data-preset]').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.preset === name)));
-    }
+    const paint = (input) => input.style.setProperty('--fill', `${((Number(input.value) + 12) / 24) * 100}%`);
+    function sync() { controls.forEach(({ input, out }, i) => { input.value = String(gains[i]); out.textContent = fmt(gains[i]); paint(input); }); }
+    function setChip(name) { $$('[data-preset]').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.preset === name))); }
 
     let anim = 0;
     function animateTo(target) {
       cancelAnimationFrame(anim);
       const from = gains.slice();
       gains = target.slice();
-      syncInputs();
+      sync();
       if (reducedMotion()) return draw(gains);
-      const start = performance.now();
+      const t0 = performance.now();
       const step = (now) => {
-        const t = Math.min(1, (now - start) / 260);
+        const t = Math.min(1, (now - t0) / 380);
         const e = 1 - Math.pow(1 - t, 3);
         draw(from.map((f, i) => f + (target[i] - f) * e));
         if (t < 1) anim = requestAnimationFrame(step);
       };
       anim = requestAnimationFrame(step);
     }
-
-    $$('[data-preset]').forEach((chip) => {
-      chip.addEventListener('click', () => {
-        setPresetChip(chip.dataset.preset);
-        animateTo(PRESETS[chip.dataset.preset]);
-      });
-    });
-
-    syncInputs();
+    $$('[data-preset]').forEach((chip) => chip.addEventListener('click', () => {
+      setChip(chip.dataset.preset);
+      animateTo(PRESETS[chip.dataset.preset]);
+    }));
+    sync();
     draw(gains);
   }
 
-  // ---------- Live colour demo ----------
+  // ---------- Optimizer preview ----------
 
-  const NEUTRAL = { vibrance: 100, saturation: 100, brightness: 0, gamma: 100, contrast: 100, temperature: 0 };
-  const START = { ...NEUTRAL, vibrance: 170 };
+  function initOptimizer() {
+    const box = $('#opt');
+    if (!box) return;
+    const counts = [6, 4, 4, 2, 5, 8];
+    const switches = $$('.switch', box);
+    const update = () => {
+      const on = switches.reduce((n, s, i) => n + (s.getAttribute('aria-checked') === 'true' ? counts[i] : 0), 0);
+      $('#opt-count').textContent = `${on} / 29 tweaks on`;
+    };
+    switches.forEach((s) => s.addEventListener('click', () => {
+      s.setAttribute('aria-checked', String(s.getAttribute('aria-checked') !== 'true'));
+      update();
+    }));
+    let told = false;
+    box.addEventListener('click', (e) => {
+      if (!told && e.target.closest('.switch')) { told = true; toast('Preview only — in the app every change is backed up first.'); }
+    });
+    update();
+  }
 
+  // ---------- Colour lab ----------
+
+  const START = { ...NEUTRAL, vibrance: 180 };
   const FORMAT = {
     vibrance: (v) => String(v),
     saturation: (v) => `${v}%`,
-    brightness: (v) => (v > 0 ? `+${v}` : String(v).replace('-', '−')),
+    brightness: (v) => (v > 0 ? `+${v}` : v < 0 ? `−${-v}` : '0'),
     gamma: (v) => (v / 100).toFixed(2),
     contrast: (v) => `${v}%`,
-    temperature: (v) => (v === 0 ? '0' : v > 0 ? `+${v}` : String(v).replace('-', '−')),
+    temperature: (v) => (v > 0 ? `+${v}` : v < 0 ? `−${-v}` : '0'),
   };
 
-  function initColor() {
-    const canvas = $('#color-canvas');
-    if (!canvas) return;
+  function initLab() {
+    const view = $('#lab-view');
+    if (!view) return;
+    const canvas = $('canvas', view);
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    const monitor = $('#monitor');
-    const W = canvas.width;
-    const H = canvas.height;
+    const flag = $('#lab-flag');
+    const inputs = $$('#lab-controls input[type="range"]');
     const state = { ...START };
-    let original = null;
-    let output = ctx.createImageData(W, H);
-    let showOriginal = false;
+    let src = null;
+    let out = ctx.createImageData(canvas.width, canvas.height);
+    let original = false;
     let queued = false;
-    let currentScene = 'grass';
+    let current = 'grass';
 
-    const inputs = $$('#sliders input[type="range"]');
-
-    function paintFill(input) {
-      const pct = ((input.value - input.min) / (input.max - input.min)) * 100;
-      input.style.setProperty('--fill', `${pct}%`);
-    }
-
-    function syncInputs() {
-      inputs.forEach((input) => {
-        const key = input.dataset.key;
-        input.value = String(state[key]);
-        $(`#o-${key}`).textContent = FORMAT[key](state[key]);
-        paintFill(input);
-      });
-    }
-
-    function buildLut() {
-      const k = (state.temperature / 100) * 0.12;
-      const mul = [1 + k, 1 + k * 0.15, 1 - k];
-      const bright = (state.brightness / 100) * 0.4;
-      const contrast = state.contrast / 100;
-      const invGamma = 100 / state.gamma;
-      const luts = [new Uint8ClampedArray(256), new Uint8ClampedArray(256), new Uint8ClampedArray(256)];
-      for (let c = 0; c < 3; c++) {
-        for (let i = 0; i < 256; i++) {
-          let v = (i / 255) * mul[c];
-          v += bright;
-          v = (v - 0.5) * contrast + 0.5;
-          v = Math.min(1, Math.max(0, v));
-          v = Math.pow(v, invGamma);
-          luts[c][i] = Math.round(v * 255);
-        }
-      }
-      return luts;
-    }
+    const paint = (input) => input.style.setProperty('--fill', `${((input.value - input.min) / (input.max - input.min)) * 100}%`);
+    const sync = () => inputs.forEach((i) => {
+      i.value = String(state[i.dataset.key]);
+      $(`#o-${i.dataset.key}`).textContent = FORMAT[i.dataset.key](state[i.dataset.key]);
+      paint(i);
+    });
 
     function render() {
       queued = false;
-      if (!original) return;
-      monitor.classList.toggle('show-original', showOriginal);
-      if (showOriginal) {
-        ctx.putImageData(original, 0, 0);
-        return;
-      }
-      const [lr, lg, lb] = buildLut();
-      const sat = state.saturation / 100;
-      const vib = (state.vibrance - 100) / 100;
-      const src = original.data;
-      const dst = output.data;
-      for (let p = 0; p < src.length; p += 4) {
-        const r = lr[src[p]];
-        const g = lg[src[p + 1]];
-        const b = lb[src[p + 2]];
-        const max = r > g ? (r > b ? r : b) : g > b ? g : b;
-        const min = r < g ? (r < b ? r : b) : g < b ? g : b;
-        // Vibrance lifts muted colours more than already-saturated ones.
-        const f = sat * (1 + vib * (1 - (max - min) / 255));
-        const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-        dst[p] = lum + (r - lum) * f;
-        dst[p + 1] = lum + (g - lum) * f;
-        dst[p + 2] = lum + (b - lum) * f;
-        dst[p + 3] = 255;
-      }
-      ctx.putImageData(output, 0, 0);
+      if (!src) return;
+      view.classList.toggle('orig', original);
+      flag.textContent = original ? 'Original' : 'DisplayX';
+      ctx.putImageData(original ? src : process(src, out, state), 0, 0);
     }
-
-    function schedule() {
-      if (!queued) {
-        queued = true;
-        requestAnimationFrame(render);
-      }
-    }
+    const schedule = () => { if (!queued) { queued = true; requestAnimationFrame(render); } };
 
     async function setScene(name) {
-      currentScene = name;
+      current = name;
       try {
-        const img = await loadScene(name);
-        if (currentScene !== name) return;
-        // Cover-fit into the canvas.
-        const scale = Math.max(W / img.naturalWidth || W / img.width, H / img.naturalHeight || H / img.height);
-        const w = (img.naturalWidth || img.width) * scale;
-        const h = (img.naturalHeight || img.height) * scale;
-        ctx.clearRect(0, 0, W, H);
-        ctx.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
-        original = ctx.getImageData(0, 0, W, H);
-        output = ctx.createImageData(W, H);
+        const data = await sceneData(name, canvas);
+        if (current !== name) return;
+        src = data;
+        out = ctx.createImageData(canvas.width, canvas.height);
         render();
-      } catch (err) {
-        console.warn('Scene failed to load', name, err);
-      }
+      } catch (e) { console.warn('scene', name, e); }
     }
 
-    inputs.forEach((input) => {
-      input.addEventListener('input', () => {
-        const key = input.dataset.key;
-        state[key] = Number(input.value);
-        $(`#o-${key}`).textContent = FORMAT[key](state[key]);
-        paintFill(input);
-        schedule();
-      });
-    });
-
-    $$('[data-scene-pick]').forEach((chip) => {
-      chip.addEventListener('click', () => {
-        $$('[data-scene-pick]').forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
-        setScene(chip.dataset.scenePick);
-      });
-    });
-
-    $('#reset-colors').addEventListener('click', () => {
-      Object.assign(state, NEUTRAL);
-      syncInputs();
+    inputs.forEach((i) => i.addEventListener('input', () => {
+      state[i.dataset.key] = Number(i.value);
+      $(`#o-${i.dataset.key}`).textContent = FORMAT[i.dataset.key](state[i.dataset.key]);
+      paint(i);
       schedule();
-    });
+    }));
+    $('#reset-colors').addEventListener('click', () => { Object.assign(state, NEUTRAL); sync(); schedule(); });
 
-    // Hold-for-original: on the button (pointer or Space/Enter) and on the image itself.
-    const hold = (on) => {
-      if (showOriginal === on) return;
-      showOriginal = on;
-      schedule();
-    };
-    const holdBtn = $('#hold-original');
-    for (const target of [holdBtn, monitor]) {
-      target.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        target.setPointerCapture(e.pointerId);
-        hold(true);
-      });
-      ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((t) => target.addEventListener(t, () => hold(false)));
+    const hold = (on) => { if (original !== on) { original = on; schedule(); } };
+    const btn = $('#hold-original');
+    for (const t of [btn, view]) {
+      t.addEventListener('pointerdown', (e) => { e.preventDefault(); t.setPointerCapture(e.pointerId); hold(true); });
+      ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((ev) => t.addEventListener(ev, () => hold(false)));
     }
-    monitor.addEventListener('contextmenu', (e) => e.preventDefault());
-    holdBtn.addEventListener('keydown', (e) => {
-      if (e.key === ' ' || e.key === 'Enter') {
-        e.preventDefault();
-        hold(true);
-      }
-    });
-    holdBtn.addEventListener('keyup', (e) => { if (e.key === ' ' || e.key === 'Enter') hold(false); });
-    holdBtn.addEventListener('blur', () => hold(false));
+    view.addEventListener('contextmenu', (e) => e.preventDefault());
+    btn.addEventListener('keydown', (e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); hold(true); } });
+    btn.addEventListener('keyup', (e) => { if (e.key === ' ' || e.key === 'Enter') hold(false); });
+    btn.addEventListener('blur', () => hold(false));
 
-    syncInputs();
+    segmented($('#lab-scenes'), (scene) => setScene(scene));
+    sync();
     setScene('grass');
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    initShot();
+    initCompare();
     initZoom();
     initEq();
-    initColor();
+    initOptimizer();
+    initLab();
   });
 })();

@@ -4,34 +4,42 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Imprint — DisplayX</title>
-  <meta name="theme-color" content="#0d1420">
+  <meta name="theme-color" content="#050408">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/css/site.css">
+  <script src="/js/boot.js"></script>
   <script src="/js/config.js" defer></script>
   <script src="/js/common.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <header class="nav">
-    <div class="wrap nav-inner">
-      <a class="brand" href="/" aria-label="DisplayX home"><img src="/assets/logo.svg" alt="" width="30" height="30">DisplayX</a>
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Menu">
+  <div class="bg-glow" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="/" aria-label="DisplayX home"><img src="/assets/logo.svg" alt="" width="32" height="32"><span>Display<span class="x">X</span></span></a>
+      <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Menu">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
-      <nav class="nav-menu" id="nav-menu" aria-label="Main">
-        <ul class="nav-links">
-          <li><a href="/#features">Features</a></li>
-          <li><a href="/#demo">Live demo</a></li>
-          <li><a href="/#download">Download</a></li>
-          <li><a href="/#faq">FAQ</a></li>
-          <li><a href="/login" data-auth-link data-account-label>Sign in</a></li>
-        </ul>
-        <a class="btn btn-primary nav-cta" href="/register" data-auth-link>Get DisplayX</a>
-      </nav>
+      <div class="menu" id="menu">
+        <nav class="topnav" aria-label="Main">
+          <a href="/#features">Features</a>
+          <a href="/#demo">Live demo</a>
+          <a href="/#download">Download</a>
+          <a href="/#faq">FAQ</a>
+        </nav>
+        <div class="top-actions">
+          <a class="btn btn-sm" href="/login" data-auth-link data-account-label>Sign in</a>
+          <a class="btn btn-primary btn-sm" href="/register" data-auth-link>Get DisplayX</a>
+        </div>
+      </div>
     </div>
   </header>
+
   <main id="main" class="simple">
     <div class="wrap prose">
+      <span class="kicker">Legal</span>
       <h1>Imprint</h1>
       <p class="placeholder">Template — replace every [bracketed] value before going live. Information according to § 5 DDG (Germany).</p>
 
@@ -48,17 +56,18 @@
       <p>We are neither willing nor obliged to take part in dispute resolution proceedings before a consumer arbitration board.</p>
     </div>
   </main>
+
   <footer class="footer">
     <div class="wrap footer-inner">
       <div>
-        <a class="brand" href="/"><img src="/assets/logo.svg" alt="" width="26" height="26">DisplayX</a>
+        <a class="brand" href="/"><img src="/assets/logo.svg" alt="" width="28" height="28"><span>Display<span class="x">X</span></span></a>
         <small>© <span data-year></span> DisplayX. Not affiliated with NVIDIA, AMD, Microsoft, Valve or any game publisher.</small>
       </div>
-      <ul class="footer-links">
-        <li><a href="/">Home</a></li>
-        <li><a href="/imprint">Imprint</a></li>
-        <li><a href="/privacy">Privacy</a></li>
-      </ul>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="/">Home</a>
+        <a href="/imprint">Imprint</a>
+        <a href="/privacy">Privacy</a>
+      </nav>
     </div>
   </footer>
 </body>

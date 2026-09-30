@@ -4,7 +4,7 @@ Product site for **DisplayX** (displayx.lol) plus the account system the site an
 register / sign in with **email, Google or Discord**, email verification, password reset,
 **two-factor authentication (TOTP + recovery codes)**, account dashboard and the gated download.
 
-- `public/` — the static site (plain HTML/CSS/JS, no build step, no external fonts/CDNs/trackers)
+- `public/` — the static site (plain HTML/CSS/JS, no build step, no external CDNs/trackers)
 - `server/` — Node.js + Express API, SQLite via the built-in `node:sqlite`
 - `test/` — API tests (`npm test`)
 
@@ -22,12 +22,20 @@ Without SMTP configured, verification and reset emails are printed to the server
 open the link from there. Without Google/Discord credentials, those buttons return to the
 sign-in page with a “not available” message.
 
+## Design
+
+Black / violet look (same design language as the NOVA site): `#050408` background, violet `#a855f7` / `#c084fc`,
+glowing panels, gradient buttons with a shine sweep, segmented controls with a gliding highlight, a glowing
+custom cursor (mouse only) and a short warp-speed intro on the home page (once per browser session,
+skippable, never with `prefers-reduced-motion`; `/?intro` replays it). Fonts: **Geist** and **Geist Mono**,
+self-hosted in `public/fonts/` (SIL Open Font License, see `public/fonts/LICENSE.txt`) — no Google Fonts.
+
 ## Pages
 
 | URL | |
 |---|---|
-| `/` | Home: hero, built-for, features, ultra-zoom demo, equalizer demo, optimizer, auto-connect, live colour demo, download, honest limits, FAQ |
-| `/register`, `/login` | Sign in / register (email, Google, Discord), verification states, 2FA step |
+| `/` | Home: intro, hero with before/after slider, built-for marquee, feature bento, ultra-zoom demo, equalizer demo, optimizer preview, auto-connect, colour lab, download, honest limits, FAQ |
+| `/register`, `/login` | Sign in / register tabs (email, Google, Discord), verification states, 2FA step with 6-digit code boxes |
 | `/forgot-password`, `/reset-password` | Password reset |
 | `/dashboard` | Download, account details, change/set password, 2FA, sign out everywhere, delete account |
 | `/imprint`, `/privacy` | **Templates** — fill in the `[bracketed]` values before going live |
@@ -79,8 +87,7 @@ Token is stored client-side in `localStorage` under `dx_token`; a 401 from `/me`
 
 ## Assets to add
 
-- `public/assets/app.png` — app screenshot (1120×720). Until it exists, the hero shows a neutral frame.
-- `public/assets/scenes/grass.jpg`, `snow.jpg`, `desert.jpg` — real game scenes for the colour demo.
+- `public/assets/scenes/grass.jpg`, `snow.jpg`, `desert.jpg` — real game scenes for the hero before/after and the colour lab.
   The bundled `.svg` illustrations are used until the `.jpg` files exist.
 - The installer: `downloads/DisplayX.exe` or `DOWNLOAD_URL`.
 

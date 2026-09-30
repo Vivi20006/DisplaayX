@@ -5,76 +5,97 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Your account — DisplayX</title>
   <meta name="robots" content="noindex">
-  <meta name="theme-color" content="#0d1420">
+  <meta name="theme-color" content="#050408">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/site.css">
+  <script src="/js/boot.js"></script>
   <script src="/js/config.js" defer></script>
   <script src="/js/common.js" defer></script>
   <script src="/js/dashboard.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
+  <div class="bg-glow" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
 
-  <header class="nav">
-    <div class="wrap nav-inner">
-      <a class="brand" href="/" aria-label="DisplayX home"><img src="/assets/logo.svg" alt="" width="30" height="30">DisplayX</a>
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Menu">
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="/" aria-label="DisplayX home"><img src="/assets/logo.svg" alt="" width="32" height="32"><span>Display<span class="x">X</span></span></a>
+      <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Menu">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
-      <nav class="nav-menu" id="nav-menu" aria-label="Main">
-        <ul class="nav-links">
-          <li><a href="/#features">Features</a></li>
-          <li><a href="/#demo">Live demo</a></li>
-          <li><a href="/#faq">FAQ</a></li>
-          <li><a href="/dashboard" aria-current="true">Account</a></li>
-        </ul>
-        <button class="btn btn-ghost nav-cta" type="button" data-signout>Sign out</button>
-      </nav>
+      <div class="menu" id="menu">
+        <nav class="topnav" aria-label="Main">
+          <a href="/#features">Features</a>
+          <a href="/#demo">Live demo</a>
+          <a href="/#faq">FAQ</a>
+          <a href="/dashboard" class="active" aria-current="page">Account</a>
+        </nav>
+        <div class="top-actions">
+          <button class="btn btn-sm" type="button" data-signout>Sign out</button>
+        </div>
+      </div>
     </div>
   </header>
 
   <main id="main" class="dash">
     <div class="wrap">
-      <div class="dash-loading" data-loading>Loading your account…</div>
+      <div class="loading" data-loading>Loading your account…</div>
 
-      <div data-content hidden>
-        <div class="dash-head">
-          <div>
-            <h1>Hi, <span data-f="username"></span></h1>
-            <p>Your DisplayX account. Use it to sign in to the app, too.</p>
-          </div>
-        </div>
-        <div data-alert></div>
+      <div class="dash-layout" data-content hidden>
+        <!-- Profile -->
+        <aside class="panel profile">
+          <div class="avatar" data-f="initial" aria-hidden="true"></div>
+          <h1 data-f="username"></h1>
+          <p class="email" data-f="email"></p>
+          <div class="pill-row" data-badges></div>
+          <dl class="kv">
+            <div><dt>Signed up with</dt><dd data-f="provider"></dd></div>
+            <div><dt>Member since</dt><dd data-f="created"></dd></div>
+            <div><dt>Last sign-in</dt><dd data-f="lastLogin"></dd></div>
+          </dl>
+          <button class="btn btn-block" type="button" data-signout>Sign out</button>
+        </aside>
 
-        <div class="dash-grid">
-          <div class="dash-col">
-            <!-- Download -->
-            <section class="card dl-hero" aria-labelledby="dl-title">
-              <h2 id="dl-title">Download DisplayX</h2>
-              <p class="sub">Free — every feature, every future update.</p>
-              <button class="btn btn-primary btn-lg" type="button" data-download>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
-                Download for Windows
-              </button>
-              <p class="dl-meta" data-dl-meta>Version 1.1.0 · ~69 MB · Windows 10 &amp; 11, 64-bit</p>
-              <div data-dl-alert></div>
-              <ol class="dl-steps">
-                <li><span><strong>Run DisplayX.exe.</strong> One self-contained file — no .NET install needed.</span></li>
-                <li><span><strong>Sign in with this account</strong> when the app asks on first start.</span></li>
-                <li><span><strong>Pick a profile</strong> — or create one for your game — and it applies when the game gets focus.</span></li>
-              </ol>
-            </section>
+        <div class="dash-main">
+          <div data-alert></div>
 
+          <!-- Download -->
+          <section class="stage dl-stage" aria-labelledby="dl-title">
+            <span class="kicker">Download</span>
+            <h2 id="dl-title">DisplayX <span class="grad">for Windows</span></h2>
+            <p class="sub">Free — every feature, every future update.</p>
+            <button class="btn btn-primary btn-lg" type="button" data-download>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+              Download for Windows
+            </button>
+            <div class="pill-row dl-meta">
+              <span class="pill">Version <b data-dl="version">1.1.0</b></span>
+              <span class="pill">Size <b data-dl="size">~69 MB</b></span>
+              <span class="pill"><b data-dl="os">Windows 10 &amp; 11, 64-bit</b></span>
+            </div>
+            <div class="dl-alert" data-dl-alert></div>
+            <ol class="dl-steps">
+              <li><span class="step-n">01</span><b>Run DisplayX.exe</b>One self-contained file — no .NET install needed.</li>
+              <li><span class="step-n">02</span><b>Sign in</b>with this account when the app asks on first start.</li>
+              <li><span class="step-n">03</span><b>Pick a profile</b>or make one for your game — it applies on focus.</li>
+            </ol>
+          </section>
+
+          <div class="dash-grid">
             <!-- Two-factor -->
-            <section class="card" aria-labelledby="twofa-title">
-              <h2 id="twofa-title">Two-factor authentication</h2>
-              <p class="sub">Ask for a code from an authenticator app (Google Authenticator, Authy, 1Password, …) when you sign in.</p>
-              <div data-twofa-alert></div>
+            <section class="panel" aria-labelledby="tf-title">
+              <div class="card-h">
+                <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <h2 id="tf-title">Two-factor authentication</h2>
+              </div>
+              <p class="card-sub">A code from your authenticator app (Google Authenticator, Authy, 1Password …) on every sign-in.</p>
+              <div data-tf-alert></div>
 
-              <!-- Off -->
-              <div data-twofa="off" hidden>
-                <p><span class="badge">Off</span></p>
-                <form class="twofa-setup" data-form="twofa-start" novalidate>
+              <div data-tf="off" hidden>
+                <form class="stack" data-form="tf-start" novalidate>
+                  <div class="pill-row"><span class="pill warn"><span class="dot"></span>Off</span></div>
                   <div class="field" data-needs-password>
                     <label for="tf-start-pw">Current password</label>
                     <input class="input" id="tf-start-pw" name="password" type="password" autocomplete="current-password">
@@ -83,83 +104,63 @@
                 </form>
               </div>
 
-              <!-- Setup -->
-              <div data-twofa="setup" hidden>
-                <div class="twofa-setup">
-                  <p class="sub">1. Scan this QR code with your authenticator app.</p>
+              <div data-tf="setup" hidden>
+                <form class="stack" data-form="tf-enable" novalidate>
+                  <p class="hint">1 · Scan the QR code with your authenticator app</p>
                   <div class="qr-row">
-                    <img data-qr alt="QR code for your authenticator app" width="168" height="168">
+                    <img data-qr alt="QR code for your authenticator app" width="172" height="172">
                     <div class="field">
-                      <span class="label">Can’t scan? Enter this key:</span>
+                      <span class="label">Can’t scan? Enter this key</span>
                       <code class="secret" data-secret></code>
                     </div>
                   </div>
-                  <form data-form="twofa-enable" novalidate>
-                    <div class="field">
-                      <label for="tf-enable-code">2. Enter the 6-digit code from the app</label>
-                      <input class="input code" id="tf-enable-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000">
-                    </div>
-                    <div class="form-actions inline-actions">
-                      <button class="btn btn-primary" type="submit">Verify and turn on</button>
-                      <button class="btn btn-ghost" type="button" data-twofa-cancel>Cancel</button>
-                    </div>
-                  </form>
-                </div>
+                  <p class="hint">2 · Enter the 6-digit code it shows</p>
+                  <div class="otp" id="enable-otp" role="group" aria-label="6-digit code"></div>
+                  <div class="inline-actions">
+                    <button class="btn btn-primary" type="submit">Verify &amp; turn on</button>
+                    <button class="btn" type="button" data-tf-cancel>Cancel</button>
+                  </div>
+                </form>
               </div>
 
-              <!-- Recovery codes -->
-              <div data-twofa="codes" hidden>
-                <div class="twofa-setup">
-                  <div class="alert warn"><p><strong>Save these recovery codes.</strong> Each one lets you sign in once if you lose your phone. They won’t be shown again.</p></div>
+              <div data-tf="codes" hidden>
+                <div class="stack">
+                  <div class="alert warn"><p><b>Save these recovery codes.</b> Each lets you sign in once if you lose your phone. They won’t be shown again.</p></div>
                   <ul class="codes" data-codes></ul>
                   <div class="inline-actions">
-                    <button class="btn btn-ghost btn-sm" type="button" data-copy-codes>Copy</button>
-                    <button class="btn btn-ghost btn-sm" type="button" data-save-codes>Download .txt</button>
+                    <button class="btn btn-sm" type="button" data-copy-codes>Copy</button>
+                    <button class="btn btn-sm" type="button" data-save-codes>Download .txt</button>
                     <button class="btn btn-primary btn-sm" type="button" data-codes-done>I’ve saved them</button>
                   </div>
                 </div>
               </div>
 
-              <!-- On -->
-              <div data-twofa="on" hidden>
-                <p><span class="badge ok">On</span> <span class="hint" data-codes-left></span></p>
-                <form class="twofa-setup" data-form="twofa-manage" novalidate>
+              <div data-tf="on" hidden>
+                <form class="stack" data-form="tf-manage" novalidate>
+                  <div class="pill-row"><span class="pill good"><span class="dot"></span>On</span><span class="pill" data-codes-left></span></div>
                   <div class="field" data-needs-password>
                     <label for="tf-off-pw">Current password</label>
                     <input class="input" id="tf-off-pw" name="password" type="password" autocomplete="current-password">
                   </div>
                   <div class="field">
-                    <label for="tf-off-code">Authentication or recovery code</label>
-                    <input class="input" id="tf-off-code" name="code" type="text" autocomplete="one-time-code" placeholder="000000">
+                    <label for="tf-off-code">Authenticator or recovery code</label>
+                    <input class="input mono" id="tf-off-code" name="code" type="text" autocomplete="one-time-code" placeholder="000000">
                   </div>
                   <div class="inline-actions">
-                    <button class="btn btn-ghost" type="submit" data-action="codes">New recovery codes</button>
+                    <button class="btn" type="submit" data-action="codes">New recovery codes</button>
                     <button class="btn btn-danger" type="submit" data-action="disable">Turn off 2FA</button>
                   </div>
                 </form>
               </div>
             </section>
-          </div>
-
-          <div class="dash-col">
-            <!-- Account -->
-            <section class="card" aria-labelledby="acc-title">
-              <h2 id="acc-title">Account</h2>
-              <p class="sub">Your details.</p>
-              <dl class="kv">
-                <div><dt>Email</dt><dd data-f="email"></dd></div>
-                <div><dt>Username</dt><dd data-f="username"></dd></div>
-                <div><dt>Signed up with</dt><dd data-f="provider"></dd></div>
-                <div><dt>Email status</dt><dd data-f="verified"></dd></div>
-                <div><dt>Member since</dt><dd data-f="created"></dd></div>
-                <div><dt>Last sign-in</dt><dd data-f="lastLogin"></dd></div>
-              </dl>
-            </section>
 
             <!-- Password -->
-            <section class="card" aria-labelledby="pw-title">
-              <h2 id="pw-title" data-pw-title>Change password</h2>
-              <p class="sub" data-pw-sub>Other devices will be signed out.</p>
+            <section class="panel" aria-labelledby="pw-title">
+              <div class="card-h">
+                <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                <h2 id="pw-title" data-pw-title>Change password</h2>
+              </div>
+              <p class="card-sub" data-pw-sub>Other devices will be signed out.</p>
               <div data-pw-alert></div>
               <form data-form="password" novalidate>
                 <div class="field" data-needs-password>
@@ -168,8 +169,11 @@
                 </div>
                 <div class="field">
                   <label for="pw-new">New password</label>
-                  <input class="input" id="pw-new" name="newPassword" type="password" autocomplete="new-password" minlength="6">
-                  <span class="hint">At least 6 characters.</span>
+                  <div class="input-wrap">
+                    <input class="input" id="pw-new" name="newPassword" type="password" autocomplete="new-password" minlength="6">
+                    <button class="reveal-btn" type="button" data-reveal aria-label="Show password">Show</button>
+                  </div>
+                  <div class="meter" data-meter aria-hidden="true"><i></i><i></i><i></i><i></i></div>
                 </div>
                 <div class="field">
                   <label for="pw-confirm">Repeat new password</label>
@@ -180,37 +184,38 @@
             </section>
 
             <!-- Sessions -->
-            <section class="card" aria-labelledby="sess-title">
-              <h2 id="sess-title">Sessions</h2>
-              <p class="sub">Signed in somewhere you don’t recognise? Sign out everywhere, including the app.</p>
-              <button class="btn btn-ghost" type="button" data-logout-all>Sign out on all devices</button>
+            <section class="panel" aria-labelledby="sess-title">
+              <div class="card-h">
+                <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></span>
+                <h2 id="sess-title">Sessions</h2>
+              </div>
+              <p class="card-sub">Signed in somewhere you don’t recognise? Sign out everywhere — including the app.</p>
+              <button class="btn" type="button" data-logout-all>Sign out on all devices</button>
             </section>
 
             <!-- Delete -->
-            <section class="card danger-zone">
-              <details>
-                <summary>Delete account</summary>
-                <div class="twofa-setup">
-                  <p class="sub">This permanently deletes your DisplayX account. Settings stored by the app on your PC (<code>%APPDATA%\DisplayX\</code>) are not affected.</p>
-                  <div data-del-alert></div>
-                  <form data-form="delete" novalidate>
-                    <div class="field">
-                      <label for="del-confirm">Type your username to confirm</label>
-                      <input class="input" id="del-confirm" name="confirm" type="text" autocomplete="off" autocapitalize="off" spellcheck="false">
-                    </div>
-                    <div class="field" data-needs-password>
-                      <label for="del-pw">Current password</label>
-                      <input class="input" id="del-pw" name="password" type="password" autocomplete="current-password">
-                    </div>
-                    <div class="field" data-needs-2fa>
-                      <label for="del-code">Authentication or recovery code</label>
-                      <input class="input" id="del-code" name="code" type="text" autocomplete="one-time-code">
-                    </div>
-                    <div class="form-actions"><button class="btn btn-danger" type="submit">Delete my account</button></div>
-                  </form>
-                </div>
-              </details>
-            </section>
+            <details class="panel danger">
+              <summary>Delete account</summary>
+              <div class="stack">
+                <p class="card-sub">Permanently deletes your DisplayX account. Settings the app stores on your PC (<code>%APPDATA%\DisplayX\</code>) aren’t touched.</p>
+                <div data-del-alert></div>
+                <form class="stack" data-form="delete" novalidate>
+                  <div class="field">
+                    <label for="del-confirm">Type your username to confirm</label>
+                    <input class="input" id="del-confirm" name="confirm" type="text" autocomplete="off" autocapitalize="off" spellcheck="false">
+                  </div>
+                  <div class="field" data-needs-password>
+                    <label for="del-pw">Current password</label>
+                    <input class="input" id="del-pw" name="password" type="password" autocomplete="current-password">
+                  </div>
+                  <div class="field" data-needs-2fa>
+                    <label for="del-code">Authenticator or recovery code</label>
+                    <input class="input mono" id="del-code" name="code" type="text" autocomplete="one-time-code">
+                  </div>
+                  <div><button class="btn btn-danger" type="submit">Delete my account</button></div>
+                </form>
+              </div>
+            </details>
           </div>
         </div>
       </div>
@@ -220,14 +225,14 @@
   <footer class="footer">
     <div class="wrap footer-inner">
       <div>
-        <a class="brand" href="/"><img src="/assets/logo.svg" alt="" width="26" height="26">DisplayX</a>
+        <a class="brand" href="/"><img src="/assets/logo.svg" alt="" width="28" height="28"><span>Display<span class="x">X</span></span></a>
         <small>© <span data-year></span> DisplayX.</small>
       </div>
-      <ul class="footer-links">
-        <li><a href="/">Home</a></li>
-        <li><a href="/imprint">Imprint</a></li>
-        <li><a href="/privacy">Privacy</a></li>
-      </ul>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="/">Home</a>
+        <a href="/imprint">Imprint</a>
+        <a href="/privacy">Privacy</a>
+      </nav>
     </div>
   </footer>
 </body>

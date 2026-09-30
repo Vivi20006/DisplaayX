@@ -1,4 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="DisplayX">
-  <rect width="64" height="64" rx="15" fill="#2563eb"/>
-  <path d="M21 20l22 24M43 20L21 44" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="p" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a1025"/><stop offset="1" stop-color="#0b0712"/></linearGradient>
+    <linearGradient id="x" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#e9d5ff"/><stop offset="1" stop-color="#a855f7"/></linearGradient>
+  </defs>
+  <rect x="1" y="1" width="62" height="62" rx="16" fill="url(#p)" stroke="#a855f7" stroke-opacity=".55" stroke-width="2"/>
+  <path d="M19 17h9l4 7.2 4-7.2h9l-8.5 15L45 47h-9l-4-7.2-4 7.2h-9l8.5-15z" fill="url(#x)"/>
 </svg>

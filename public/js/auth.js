@@ -2,23 +2,11 @@
 (function () {
   'use strict';
 
-  const { api, token, apiBase, $, $$, setLoading } = window.DX;
+  const { api, token, apiBase, $, $$, setLoading, alertIn, segmented, otp, strength, revealButtons } = window.DX;
 
-  const PATH_VIEW = {
-    '/login': 'login',
-    '/register': 'register',
-    '/forgot-password': 'forgot',
-    '/reset-password': 'reset',
-  };
+  const PATH_VIEW = { '/login': 'login', '/register': 'register', '/forgot-password': 'forgot', '/reset-password': 'reset' };
   const VIEW_PATH = { login: '/login', register: '/register', forgot: '/forgot-password', reset: '/reset-password' };
-  const TITLES = {
-    login: 'Sign in',
-    register: 'Create account',
-    'check-email': 'Check your email',
-    twofa: 'Two-factor authentication',
-    forgot: 'Reset password',
-    reset: 'New password',
-  };
+  const TITLES = { login: 'Sign in', register: 'Create account', 'check-email': 'Check your inbox', twofa: 'Two-factor check', forgot: 'Forgot password', reset: 'New password' };
 
   const QUERY_MESSAGES = {
     'verified=1': ['success', 'Email verified. You can sign in now.'],
@@ -35,70 +23,40 @@
     'reset=1': ['success', 'Password changed. Sign in with your new password.'],
   };
 
-  const state = {
-    view: null,
-    pendingEmail: '',
-    twoFactorToken: '',
-    resetToken: '',
-  };
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const USERNAME_RE = /^[A-Za-z0-9_.-]{3,24}$/;
 
-  // ---------- view + alerts ----------
+  const state = { pendingEmail: '', twoFactorToken: '', resetToken: '' };
+  let tabs = null;
+  let code = null;
+
+  // ---------- views ----------
 
   function show(view, { push = false } = {}) {
-    state.view = view;
-    $$('[data-view]').forEach((el) => { el.hidden = el.dataset.view !== view; });
+    $$('[data-view]').forEach((el) => {
+      const on = el.dataset.view === view;
+      el.hidden = !on;
+      el.classList.toggle('view-enter', on);
+    });
+    const tabbed = view === 'login' || view === 'register';
+    $('#auth-tabs').hidden = !tabbed;
+    if (tabbed && tabs) tabs.select(view === 'login' ? 0 : 1, false);
     document.title = `${TITLES[view] || 'Account'} — DisplayX`;
-    if (push && VIEW_PATH[view] && location.pathname !== VIEW_PATH[view]) {
-      history.pushState({ view }, '', VIEW_PATH[view]);
+    if (push && VIEW_PATH[view] && location.pathname !== VIEW_PATH[view]) history.pushState({ view }, '', VIEW_PATH[view]);
+    if (window.matchMedia('(min-width: 720px)').matches) {
+      if (view === 'twofa') code.focus();
+      else { const first = $(`[data-view="${view}"] input`); if (first) first.focus({ preventScroll: true }); }
     }
-    const panel = $(`[data-view="${view}"]`);
-    const first = panel && $('input:not([type="hidden"])', panel);
-    if (first && window.matchMedia('(min-width: 720px)').matches) first.focus({ preventScroll: true });
   }
 
-  function alertBox(view) {
-    return $(`[data-view="${view}"] [data-alert]`);
-  }
-
-  /** Show an alert inside a view. `action` = { label, onClick } adds an inline button. */
-  function setAlert(view, type, message, action) {
-    const box = alertBox(view);
-    if (!box) return;
-    box.replaceChildren();
-    if (!message) return;
-    const div = document.createElement('div');
-    div.className = `alert ${type}`;
-    div.setAttribute('role', type === 'error' ? 'alert' : 'status');
-    const p = document.createElement('p');
-    p.textContent = message;
-    if (action) {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'link-btn';
-      btn.textContent = action.label;
-      btn.addEventListener('click', action.onClick);
-      p.append(' ', btn);
-    }
-    div.appendChild(p);
-    box.appendChild(div);
-  }
-
-  function clearAlerts() {
-    $$('[data-alert]').forEach((b) => b.replaceChildren());
-  }
+  const setAlert = (view, type, msg, action) => alertIn($(`[data-view="${view}"] [data-alert]`), type, msg, action);
+  const clearAlerts = () => $$('[data-alert]').forEach((b) => b.replaceChildren());
 
   function markInvalid(form, names) {
     $$('.input', form).forEach((i) => i.removeAttribute('aria-invalid'));
-    names.forEach((n) => {
-      const input = form.elements[n];
-      if (input) input.setAttribute('aria-invalid', 'true');
-    });
-    const first = names.length && form.elements[names[0]];
-    if (first) first.focus();
+    names.forEach((n) => form.elements[n] && form.elements[n].setAttribute('aria-invalid', 'true'));
+    if (names.length && form.elements[names[0]]) form.elements[names[0]].focus();
   }
-
-  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const USERNAME_RE = /^[A-Za-z0-9_.-]{3,24}$/;
 
   // ---------- flows ----------
 
@@ -107,11 +65,10 @@
     location.replace(`/dashboard${extra}`);
   }
 
-  async function resendVerification(view, email, btn) {
+  async function resend(view, email, btn) {
     setLoading(btn, true);
     const r = await api('POST', '/api/auth/resend-verification', { email });
     setLoading(btn, false);
-    if (r.status === 429) return setAlert(view, 'error', r.data.error);
     if (!r.ok) return setAlert(view, 'error', r.data.error || 'Couldn’t send the email. Please try again.');
     setAlert(view, 'success', `Sent. Check the inbox of ${email}.`);
   }
@@ -119,13 +76,10 @@
   async function onLogin(form) {
     const email = form.elements.email.value.trim();
     const password = form.elements.password.value;
-    const invalid = [];
-    if (!EMAIL_RE.test(email)) invalid.push('email');
-    if (!password) invalid.push('password');
-    if (invalid.length) {
-      markInvalid(form, invalid);
-      return setAlert('login', 'error', 'Enter your email and password.');
-    }
+    const bad = [];
+    if (!EMAIL_RE.test(email)) bad.push('email');
+    if (!password) bad.push('password');
+    if (bad.length) { markInvalid(form, bad); return setAlert('login', 'error', 'Enter your email and password.'); }
     markInvalid(form, []);
     const btn = $('button[type="submit"]', form);
     setLoading(btn, true);
@@ -142,7 +96,7 @@
     if (r.status === 403 && r.data.needsVerification) {
       return setAlert('login', 'warn', 'Please verify your email before signing in.', {
         label: 'Resend verification email',
-        onClick: (e) => resendVerification('login', email, e.currentTarget),
+        onClick: (e) => resend('login', email, e.currentTarget),
       });
     }
     setAlert('login', 'error', r.data.error || 'Sign-in failed. Please try again.');
@@ -152,15 +106,11 @@
     const email = form.elements.email.value.trim();
     const username = form.elements.username.value.trim();
     const password = form.elements.password.value;
-    const invalid = [];
-    const problems = [];
-    if (!EMAIL_RE.test(email)) { invalid.push('email'); problems.push('Enter a valid email address.'); }
-    if (!USERNAME_RE.test(username)) { invalid.push('username'); problems.push('Username: 3–24 characters, letters, numbers, _ . -'); }
-    if (password.length < 6) { invalid.push('password'); problems.push('Password must be at least 6 characters.'); }
-    if (invalid.length) {
-      markInvalid(form, invalid);
-      return setAlert('register', 'error', problems.join(' '));
-    }
+    const bad = [], msgs = [];
+    if (!EMAIL_RE.test(email)) { bad.push('email'); msgs.push('Enter a valid email address.'); }
+    if (!USERNAME_RE.test(username)) { bad.push('username'); msgs.push('Username: 3–24 characters, letters, numbers, _ . -'); }
+    if (password.length < 6) { bad.push('password'); msgs.push('Password must be at least 6 characters.'); }
+    if (bad.length) { markInvalid(form, bad); return setAlert('register', 'error', msgs.join(' ')); }
     markInvalid(form, []);
     const btn = $('button[type="submit"]', form);
     setLoading(btn, true);
@@ -171,7 +121,7 @@
       state.pendingEmail = email;
       $('[data-email-target]').textContent = email;
       form.reset();
-      updateStrength(form.elements.password);
+      $('[data-meter]', form).dataset.score = '0';
       clearAlerts();
       return show('check-email');
     }
@@ -180,11 +130,11 @@
   }
 
   async function onTwoFactor(form) {
-    const recoveryMode = !$('[data-recovery-field]').hidden;
-    const code = (recoveryMode ? form.elements.recovery.value : form.elements.code.value).trim();
-    if (!code) {
-      markInvalid(form, [recoveryMode ? 'recovery' : 'code']);
-      return setAlert('twofa', 'error', recoveryMode ? 'Enter one of your recovery codes.' : 'Enter the 6-digit code.');
+    const recovery = !$('[data-recovery-field]').hidden;
+    const value = recovery ? form.elements.recovery.value.trim() : code.value();
+    if (recovery ? !value : value.length !== 6) {
+      if (!recovery) code.shake();
+      return setAlert('twofa', 'error', recovery ? 'Enter one of your recovery codes.' : 'Enter all 6 digits.');
     }
     if (!state.twoFactorToken) {
       show('login', { push: true });
@@ -192,7 +142,7 @@
     }
     const btn = $('button[type="submit"]', form);
     setLoading(btn, true);
-    const r = await api('POST', '/api/auth/2fa/verify', { twoFactorToken: state.twoFactorToken, code });
+    const r = await api('POST', '/api/auth/2fa/verify', { twoFactorToken: state.twoFactorToken, code: value });
     setLoading(btn, false);
 
     if (r.ok && r.data.token) {
@@ -204,18 +154,15 @@
       show('login', { push: true });
       return setAlert('login', 'warn', r.data.error);
     }
-    form.elements.code.value = '';
+    code.clear();
     form.elements.recovery.value = '';
-    markInvalid(form, [recoveryMode ? 'recovery' : 'code']);
+    if (!recovery) { code.shake(); code.focus(); }
     setAlert('twofa', 'error', r.data.error || 'That code didn’t work.');
   }
 
   async function onForgot(form) {
     const email = form.elements.email.value.trim();
-    if (!EMAIL_RE.test(email)) {
-      markInvalid(form, ['email']);
-      return setAlert('forgot', 'error', 'Enter a valid email address.');
-    }
+    if (!EMAIL_RE.test(email)) { markInvalid(form, ['email']); return setAlert('forgot', 'error', 'Enter a valid email address.'); }
     markInvalid(form, []);
     const btn = $('button[type="submit"]', form);
     setLoading(btn, true);
@@ -227,15 +174,8 @@
 
   async function onReset(form) {
     const password = form.elements.password.value;
-    const confirm = form.elements.confirm.value;
-    if (password.length < 6) {
-      markInvalid(form, ['password']);
-      return setAlert('reset', 'error', 'Password must be at least 6 characters.');
-    }
-    if (password !== confirm) {
-      markInvalid(form, ['confirm']);
-      return setAlert('reset', 'error', 'The passwords don’t match.');
-    }
+    if (password.length < 6) { markInvalid(form, ['password']); return setAlert('reset', 'error', 'Password must be at least 6 characters.'); }
+    if (password !== form.elements.confirm.value) { markInvalid(form, ['confirm']); return setAlert('reset', 'error', 'The passwords don’t match.'); }
     markInvalid(form, []);
     const btn = $('button[type="submit"]', form);
     setLoading(btn, true);
@@ -245,113 +185,69 @@
     token.clear();
     form.reset();
     show('login', { push: true });
-    const [type, msg] = QUERY_MESSAGES['reset=1'];
-    setAlert('login', type, msg);
+    setAlert('login', ...QUERY_MESSAGES['reset=1']);
   }
 
   async function enterReset() {
     const form = $('[data-form="reset"]');
-    if (!state.resetToken) {
-      form.hidden = true;
-      return setAlert('reset', 'error', 'This page needs the link from your reset email. Request a new one below.');
-    }
+    const invalid = (msg) => { form.hidden = true; setAlert('reset', 'error', msg); };
+    if (!state.resetToken) return invalid('This page needs the link from your reset email. Request a new one below.');
     const r = await api('GET', `/api/auth/reset-password/check?token=${encodeURIComponent(state.resetToken)}`);
-    if (!r.ok || !r.data.valid) {
-      form.hidden = true;
-      return setAlert('reset', 'error', 'This reset link is invalid or has expired. Request a new one below.');
-    }
+    if (!r.ok || !r.data.valid) return invalid('This reset link is invalid or has expired. Request a new one below.');
     form.hidden = false;
   }
 
-  // ---------- small UI helpers ----------
-
-  function updateStrength(input) {
-    const meter = input.closest('.field') && $('[data-strength]', input.closest('.field'));
-    if (!meter) return;
-    const v = input.value;
-    let score = 0;
-    if (v.length >= 6) score++;
-    if (v.length >= 10) score++;
-    if (/[a-z]/.test(v) && /[A-Z]/.test(v) && /\d/.test(v)) score++;
-    if (/[^A-Za-z0-9]/.test(v) || v.length >= 16) score++;
-    meter.dataset.score = String(score);
-    $('span', meter).style.width = `${(score / 4) * 100}%`;
-  }
+  // ---------- wiring ----------
 
   function initUi() {
-    // OAuth buttons go to the API host.
     $$('[data-oauth]').forEach((a) => { a.href = `${apiBase}/api/oauth/${a.dataset.oauth}`; });
+    revealButtons();
+    $$('[data-meter]').forEach((m) => strength($('input', m.closest('.field')), m));
 
-    $$('[data-reveal]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const input = $('input', btn.parentElement);
-        const hidden = input.type === 'password';
-        input.type = hidden ? 'text' : 'password';
-        btn.textContent = hidden ? 'Hide' : 'Show';
-        btn.setAttribute('aria-label', hidden ? 'Hide password' : 'Show password');
-      });
+    tabs = segmented($('#auth-tabs'), (view) => {
+      clearAlerts();
+      show(view, { push: true });
     });
 
-    $$('[data-strength]').forEach((meter) => {
-      const input = $('input', meter.closest('.field'));
-      input.addEventListener('input', () => updateStrength(input));
-    });
-
-    $$('[data-go]').forEach((a) => {
-      a.addEventListener('click', (e) => {
-        if (e.metaKey || e.ctrlKey || e.shiftKey) return;
-        e.preventDefault();
-        clearAlerts();
-        const target = a.dataset.go;
-        if (target === 'forgot') {
-          const email = $('#login-email').value.trim();
-          if (email) $('#forgot-email').value = email;
-        }
-        show(target, { push: true });
-      });
-    });
+    $$('[data-go]').forEach((a) => a.addEventListener('click', (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+      e.preventDefault();
+      clearAlerts();
+      if (a.dataset.go === 'forgot' && $('#login-email').value.trim()) $('#forgot-email').value = $('#login-email').value.trim();
+      show(a.dataset.go, { push: true });
+    }));
 
     const handlers = { login: onLogin, register: onRegister, twofa: onTwoFactor, forgot: onForgot, reset: onReset };
-    $$('[data-form]').forEach((form) => {
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        handlers[form.dataset.form](form);
-      });
-    });
+    $$('[data-form]').forEach((form) => form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      handlers[form.dataset.form](form);
+    }));
 
-    // Auto-submit a complete 6-digit code.
-    const codeInput = $('#twofa-code');
-    codeInput.addEventListener('input', () => {
-      codeInput.value = codeInput.value.replace(/[^\d]/g, '').slice(0, 6);
-      if (codeInput.value.length === 6) $('[data-form="twofa"]').requestSubmit();
-    });
+    code = otp($('#login-otp'), () => $('[data-form="twofa"]').requestSubmit());
 
     $('[data-toggle-recovery]').addEventListener('click', (e) => {
-      const recoveryField = $('[data-recovery-field]');
-      const useRecovery = recoveryField.hidden;
-      recoveryField.hidden = !useRecovery;
-      $('[data-totp-field]').hidden = useRecovery;
+      const field = $('[data-recovery-field]');
+      const useRecovery = field.hidden;
+      field.hidden = !useRecovery;
+      $('#login-otp').hidden = useRecovery;
       e.currentTarget.textContent = useRecovery ? 'Use your authenticator app instead' : 'Use a recovery code instead';
       $('[data-twofa-sub]').textContent = useRecovery
-        ? 'Enter one of the recovery codes you saved when you turned on 2FA. Each code works once.'
+        ? 'Enter one of the recovery codes you saved when you turned on 2FA. Each works once.'
         : 'Enter the 6-digit code from your authenticator app.';
-      (useRecovery ? $('#twofa-recovery') : codeInput).focus();
+      if (useRecovery) $('#twofa-recovery').focus(); else code.focus();
     });
 
     let cooldown = 0;
     $('[data-resend]').addEventListener('click', async (e) => {
       const btn = e.currentTarget;
       if (!state.pendingEmail || cooldown) return;
-      await resendVerification('check-email', state.pendingEmail, btn);
+      await resend('check-email', state.pendingEmail, btn);
       cooldown = 60;
       btn.disabled = true;
       const tick = setInterval(() => {
         cooldown--;
         btn.textContent = cooldown ? `Resend email (${cooldown}s)` : 'Resend email';
-        if (!cooldown) {
-          clearInterval(tick);
-          btn.disabled = false;
-        }
+        if (!cooldown) { clearInterval(tick); btn.disabled = false; }
       }, 1000);
     });
 
@@ -363,36 +259,26 @@
     });
   }
 
-  // ---------- start ----------
-
   document.addEventListener('DOMContentLoaded', () => {
     initUi();
-
     const params = new URLSearchParams(location.search);
     let view = PATH_VIEW[location.pathname] || 'login';
-
-    if (params.has('twofa')) {
-      state.twoFactorToken = params.get('twofa');
-      view = 'twofa';
-    }
+    if (params.has('twofa')) { state.twoFactorToken = params.get('twofa'); view = 'twofa'; }
     if (params.has('token') && view === 'reset') state.resetToken = params.get('token');
 
-    // Signed-in visitors landing on sign-in / register go straight to their account.
     if (!location.search && (view === 'login' || view === 'register') && token.get()) {
       location.replace('/dashboard');
       return;
     }
-
-    // Strip tokens and one-off flags from the address bar.
+    // Keep tokens and one-off flags out of the address bar and history.
     if (location.search) history.replaceState(null, '', location.pathname);
 
     show(view);
     for (const [key, value] of params) {
       const msg = QUERY_MESSAGES[`${key}=${value}`];
-      if (msg) {
-        if (key === 'signedout' || key === 'deleted' || key === 'session') token.clear();
-        setAlert(view, msg[0], msg[1]);
-      }
+      if (!msg) continue;
+      if (key === 'signedout' || key === 'deleted' || key === 'session') token.clear();
+      setAlert(view, msg[0], msg[1]);
     }
     if (view === 'reset') enterReset();
   });
